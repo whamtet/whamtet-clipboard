@@ -25,6 +25,8 @@
 (def app2 (routes #'html/routes
                   app))
 
+(defonce store (cookie/cookie-store {:key (env :session-secret)}))
+
 (defn wrap-app [app]
   ;; TODO: heroku config:add SESSION_SECRET=$RANDOM_16_CHARS
     (-> app
