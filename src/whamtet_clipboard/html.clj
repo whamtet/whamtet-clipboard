@@ -9,7 +9,7 @@
 (import java.io.FileOutputStream)
 (import java.util.zip.ZipEntry)
 
-(def store (File. "tmp"))
+(def store (File. "resources/public"))
 (.mkdirs store)
 ;(use 'clojure.pprint)
 ;(defn pr-response [x] (-> x pprint with-out-str response/response))
@@ -28,7 +28,7 @@
                  zip-fn (if (.contains first-fn "/")
                           (first (.split first-fn "/"))
                           (first (.split first-fn "\\.")))
-                 zip-fn (format "tmp/%s.zip" zip-fn)
+                 zip-fn (format "resources/public/%s.zip" zip-fn)
                  ]
              (with-open [zos (-> zip-fn FileOutputStream. ZipOutputStream.)]
                (doseq [{:keys [tempfile filename]} relavent-files]

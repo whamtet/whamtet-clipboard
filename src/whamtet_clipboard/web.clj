@@ -18,7 +18,7 @@
   (= [user pass] ["matthew" "friendster"]))
 
 (defroutes app
-  (route/resources "/" :root "../tmp")
+  (route/resources "/")
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 
