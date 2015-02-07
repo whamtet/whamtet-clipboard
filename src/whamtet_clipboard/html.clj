@@ -7,6 +7,7 @@
 (require '[clojure.java.io :as io])
 (import java.util.zip.ZipOutputStream)
 (import java.io.FileOutputStream)
+(import java.io.FileInputStream)
 (import java.util.zip.ZipEntry)
 
 (def store (File. "resources/public"))
@@ -36,6 +37,12 @@
                  (io/copy tempfile zos)
                  (.closeEntry zos)))))
          (response/redirect "/")))
+  (GET "/download" [fname]
+       {:status 200
+        :headers {"Content-Type" "application/zip"
+                  "Content-Disposition" (format "attachment; filename=\"%s\"" fname)
+                  }
+        :body (FileInputStream. (str "resources/public/" fname))})
   (GET "/" []
        (let [
              ]
@@ -51,5 +58,5 @@
                  :when (.endsWith (.getName f) ".zip")
                  ]
              [:div
-              [:a {:href (.getName f)} (.getName f)]])
+              [:a {:href (format "/download?fname=%s" (.getName f))} (.getName f)]])
            ]))))
