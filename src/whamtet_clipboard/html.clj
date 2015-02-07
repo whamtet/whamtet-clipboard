@@ -43,6 +43,9 @@
                   "Content-Disposition" (format "attachment; filename=\"%s\"" fname)
                   }
         :body (FileInputStream. (str "resources/public/" fname))})
+  (GET "/delete" [fname]
+       (-> (str "resources/public/" fname) File. .delete)
+       (response/redirect "/"))
   (GET "/" []
        (let [
              ]
@@ -58,5 +61,8 @@
                  :when (.endsWith (.getName f) ".zip")
                  ]
              [:div
-              [:a {:href (format "/download?fname=%s" (.getName f))} (.getName f)]])
+              [:a {:href (format "/download?fname=%s" (.getName f))} (.getName f)]
+              " "
+              [:a {:href (format "/delete?fname=%s" (.getName f))} "X"]
+              ])
            ]))))
