@@ -10,6 +10,7 @@
 (import java.util.zip.ZipEntry)
 
 (def store (File. "resources/public"))
+(.mkdirs store)
 ;(use 'clojure.pprint)
 ;(defn pr-response [x] (-> x pprint with-out-str response/response))
 
