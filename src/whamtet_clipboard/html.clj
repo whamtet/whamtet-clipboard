@@ -37,6 +37,9 @@
                  (io/copy tempfile zos)
                  (.closeEntry zos)))))
          (response/redirect "/")))
+  (ANY "/upload-text" [text]
+       (spit "resources/public/clipboard.txt" text)
+       (response/redirect "/"))
   (GET "/download" [fname]
        {:status 200
         :headers {"Content-Type" "application/zip"
@@ -58,11 +61,16 @@
             [:input {:name "ff" :type "file" :multiple true}][:br][:br]
             [:input {:type "Submit"}]][:br][:br]
            (for [f (.listFiles store)
-                 :when (.endsWith (.getName f) ".zip")
+                 :when (or (= "clipboard.txt" (.getName f)) (.endsWith (.getName f) ".zip"))
                  ]
              [:div
               [:a {:href (format "/download?fname=%s" (.getName f))} (.getName f)]
               " "
               [:a {:href (format "/delete?fname=%s" (.getName f))} "X"]
               ])
+           [:br]
+           [:form {:action "/upload-text" :method "POST"}
+            [:textarea {:name "text" :style "width:90%; height: 500px;"}][:br][:br]
+            [:input {:type "Submit"}]
+            ]
            ]))))
