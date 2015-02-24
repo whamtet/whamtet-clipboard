@@ -41,11 +41,15 @@
        (spit "resources/public/clipboard.txt" text)
        (response/redirect "/"))
   (GET "/download" [fname]
-       {:status 200
-        :headers {"Content-Type" "application/zip"
-                  "Content-Disposition" (format "attachment; filename=\"%s\"" fname)
-                  }
-        :body (FileInputStream. (str "resources/public/" fname))})
+       (let [
+             f (File. (str "resources/public/" fname))
+             ]
+         {:status 200
+          :headers {"Content-Type" "application/zip"
+                    "Content-Disposition" (format "attachment; filename=\"%s\"" fname)
+                    "Content-Length" (.length f)
+                    }
+          :body (FileInputStream. f)}))
   (GET "/delete" [fname]
        (-> (str "resources/public/" fname) File. .delete)
        (response/redirect "/"))
