@@ -47,7 +47,7 @@
          {:status 200
           :headers {"Content-Type" "application/zip"
                     "Content-Disposition" (format "attachment; filename=\"%s\"" fname)
-                    "Content-Length" (.length f)
+;                    "Content-Length" (.length f)
                     }
           :body (FileInputStream. f)}))
   (GET "/delete" [fname]
