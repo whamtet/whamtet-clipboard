@@ -5,6 +5,8 @@
 (require '[ring.util.response :as response])
 (import java.io.File)
 (require '[clojure.java.io :as io])
+(require '[clojure.java.shell :as shell])
+
 (import java.util.zip.ZipOutputStream)
 (import java.io.FileOutputStream)
 (import java.io.FileInputStream)
@@ -40,6 +42,9 @@
   (ANY "/upload-text" [text]
        (spit "resources/public/clipboard.txt" text)
        (response/redirect "/"))
+  (ANY "/upload-link" [link]
+       (shell/sh "wget" link :dir "resources/public")
+       (response/redirect "/"))
   (GET "/download" [fname]
        (let [
              f (File. (str "resources/public/" fname))
@@ -47,7 +52,6 @@
          {:status 200
           :headers {"Content-Type" "application/zip"
                     "Content-Disposition" (format "attachment; filename=\"%s\"" fname)
-;                    "Content-Length" (.length f)
                     }
           :body (FileInputStream. f)}))
   (GET "/delete" [fname]
@@ -65,7 +69,7 @@
             [:input {:name "ff" :type "file" :multiple true}][:br][:br]
             [:input {:type "Submit"}]][:br][:br]
            (for [f (.listFiles store)
-                 :when (or (= "clipboard.txt" (.getName f)) (.endsWith (.getName f) ".zip"))
+                 ;:when (or (= "clipboard.txt" (.getName f)) (.endsWith (.getName f) ".zip"))
                  ]
              [:div
               [:a {:href (format "/download?fname=%s" (.getName f))} (.getName f)]
@@ -76,5 +80,8 @@
            [:form {:action "/upload-text" :method "POST"}
             [:textarea {:name "text" :style "width:90%; height: 500px;"}][:br][:br]
             [:input {:type "Submit"}]
-            ]
+            ][:br]
+           [:form {:action "/upload-link" :method "POST"}
+            [:input {:type "text" :name "link"}]
+            [:input {:type "Submit"}]]
            ]))))
